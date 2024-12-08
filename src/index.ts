@@ -1,10 +1,12 @@
 import express from "express";
 import dotenv from "dotenv";
 import Anthropic from "@anthropic-ai/sdk";
+import cors from "cors";
 
 dotenv.config();
 
 const app = express();
+app.use(cors());
 const port: Number = 4000;
 const API = process.env.GROK_API;
 
@@ -23,18 +25,32 @@ app.get("/chat", async (req, res) => {
       model: "grok-beta",
       stream: true,
       max_tokens: 128,
-      system:
-        "You are Grok, a chatbot inspired by the Hitchhiker's Guide to the Galaxy.",
+      system: "you are a helpful assistant",
       messages: [
         {
           role: "user",
-          content: "What is the meaning of life, the universe, and everything?",
+          content: "write a easy on javascript in 200 words",
         },
       ],
     });
 
+    // Set proper headers for streaming JSON
+    res.setHeader("Content-Type", "application/json");
+    res.setHeader("Transfer-Encoding", "chunked");
+
     for await (const chunk of stream) {
-      res.write(JSON.stringify(chunk));
+      console.log(chunk);
+      const jsonChunk = {
+        content:
+          chunk.type === "content_block_delta"
+            ? (chunk.delta as { type: "text_delta"; text: string }).text
+            : "",
+        type: chunk.type,
+        // index: chunk.index,
+        // index: chunk.index,
+        message: chunk.type === "message_start" ? chunk.message : undefined,
+      };
+      res.write(JSON.stringify(jsonChunk) + "\n");
     }
     res.end();
   } catch (error: any) {
