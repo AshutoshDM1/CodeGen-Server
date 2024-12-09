@@ -21,36 +21,26 @@ app.get("/", async (req, res) => {
 
 app.get("/chat", async (req, res) => {
   try {
-    const stream = await anthropic.messages.create({
+    const stream: any = await anthropic.messages.create({
       model: "grok-beta",
       stream: true,
-      max_tokens: 128,
-      system: "you are a helpful assistant",
+      max_tokens: 3000,
+      system:
+        "you are a helpful assistant who write code in js you will only give code anything else is not allowed",
       messages: [
         {
           role: "user",
-          content: "write a easy on javascript in 200 words",
+          content: "write a normal code to sum two numbers in js ",
         },
       ],
     });
 
-    // Set proper headers for streaming JSON
     res.setHeader("Content-Type", "application/json");
     res.setHeader("Transfer-Encoding", "chunked");
-
     for await (const chunk of stream) {
-      console.log(chunk);
-      const jsonChunk = {
-        content:
-          chunk.type === "content_block_delta"
-            ? (chunk.delta as { type: "text_delta"; text: string }).text
-            : "",
-        type: chunk.type,
-        // index: chunk.index,
-        // index: chunk.index,
-        message: chunk.type === "message_start" ? chunk.message : undefined,
-      };
-      res.write(JSON.stringify(jsonChunk) + "\n");
+      if (chunk.type === "content_block_delta") {
+        res.write(chunk.delta.text);
+      }
     }
     res.end();
   } catch (error: any) {
