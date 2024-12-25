@@ -1,6 +1,6 @@
 # CodeGen-Server
 
-# Not completed yet
+# Version 1.0.0 
 
 **Site Link** - https://codegen-server-yuxj.onrender.com
 
