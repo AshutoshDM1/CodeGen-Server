@@ -11,7 +11,7 @@ const router = Router();
 const API = process.env.GROK_API;
 const anthropic = new Anthropic({
   apiKey: `${API}`,
-  baseURL: "https://api.x.ai/",
+  baseURL: "https://api.gemini.ai/",
 });
 
 router.post("/template", async (req, res) => {
@@ -25,7 +25,7 @@ router.post("/template", async (req, res) => {
           content: prompt,
         },
       ],
-      model: "grok-beta",
+      model: "gemini",
       max_tokens: 200,
       system:
         "Return either node or react based on what do you think this project should be. Only return a single word either 'node' or 'react'. Do not return anything extra",
@@ -63,7 +63,7 @@ router.post("/chat", async (req, res) => {
   try {
     const { messages } = req.body;
     const stream: any = await anthropic.messages.create({
-      model: "grok-beta",
+      model: "gemini",
       stream: true,
       max_tokens: 8000,
       system: getSystemPrompt(),
