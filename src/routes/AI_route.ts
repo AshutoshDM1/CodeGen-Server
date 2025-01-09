@@ -3,29 +3,35 @@ import { BASE_PROMPT, getSystemPrompt } from "../helper/prompts";
 import { TextBlock } from "@anthropic-ai/sdk/resources";
 import { basePrompt as nodeBasePrompt } from "../defaults/node";
 import { basePrompt as reactBasePrompt } from "../defaults/react";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import Anthropic from "@anthropic-ai/sdk";
 import dotenv from "dotenv";
 dotenv.config();
 
 const router = Router();
-const API = process.env.GOOGLE_API_KEY || "";
-const genAI = new GoogleGenerativeAI(API);
+const API = process.env.AI_KEY;
+const anthropic = new Anthropic({
+  apiKey: `${API}`,
+  baseURL: "https://api.gemini.ai/",
+});
 
 router.post("/template", async (req, res) => {
-  const modelTemplate = genAI.getGenerativeModel({
-    model: "gemini-1.5-flash",
-    systemInstruction:
-      "Return either node or react based on what do you think this project should be. Only return a single word either 'node' or 'react'. Do not return anything extra",
-  });
   try {
     const prompt = req.body.prompt;
 
-    const result = await modelTemplate.generateContent(prompt, {});
-    let answer = result.response.text();
-    console.log(answer);
-    answer = answer.trim();
-
-    if (answer === "react") {
+    const response = await anthropic.messages.create({
+      messages: [
+        {
+          role: "user",
+          content: prompt,
+        },
+      ],
+      model: "gemini",
+      max_tokens: 200,
+      system:
+        "Return either node or react based on what do you think this project should be. Only return a single word either 'node' or 'react'. Do not return anything extra",
+    });
+    const answer = (response.content[0] as TextBlock).text; // react or node
+    if (answer == "react") {
       res.json({
         prompts: [
           BASE_PROMPT,
@@ -49,7 +55,6 @@ router.post("/template", async (req, res) => {
     res.status(403).json({ message: "You cant access this" });
     return;
   } catch (error: any) {
-    console.log(error);
     res.status(500).json({ msg: error.message });
   }
 });
@@ -57,36 +62,23 @@ router.post("/template", async (req, res) => {
 router.post("/chat", async (req, res) => {
   try {
     const { messages } = req.body;
-
-    // Transform messages into Gemini's format
-    const transformedMessages = messages.map((msg: any) => ({
-      role: msg.role,
-      parts: [{ text: msg.content }],
-    }));
-
-    const modelTemplate = genAI.getGenerativeModel({
-      model: "gemini-2.0-flash-exp",
-      systemInstruction: getSystemPrompt(),
+    const stream: any = await anthropic.messages.create({
+      model: "gemini",
+      stream: true,
+      max_tokens: 8000,
+      system: getSystemPrompt(),
+      messages: messages,
     });
 
-    // Start a chat with history
-    const chat = modelTemplate.startChat({
-      history: transformedMessages.slice(0, -1), // All messages except the last one
-    });
-
-    // Send the last message to get the response
-    const lastMessage = transformedMessages[transformedMessages.length - 1];
-    const result = await chat.sendMessageStream(lastMessage.parts[0].text);
-
-    res.setHeader("Content-Type", "text/plain");
-
-    for await (const chunk of result.stream) {
-      const chunkText = chunk.text();
-      res.write(chunkText);
+    res.setHeader("Content-Type", "application/json");
+    res.setHeader("Transfer-Encoding", "chunked");
+    for await (const chunk of stream) {
+      if (chunk.type === "content_block_delta") {
+        res.write(chunk.delta.text);
+      }
     }
     res.end();
   } catch (error: any) {
-    console.log(error);
     res.status(500).json({ msg: error.message });
   }
 });
