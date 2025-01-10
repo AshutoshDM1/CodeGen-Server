@@ -1,6 +1,5 @@
 import { Router } from "express";
 import { BASE_PROMPT, getSystemPrompt } from "../helper/prompts";
-import { TextBlock } from "@anthropic-ai/sdk/resources";
 import { basePrompt as nodeBasePrompt } from "../defaults/node";
 import { basePrompt as reactBasePrompt } from "../defaults/react";
 import { GoogleGenerativeAI } from "@google/generative-ai";
@@ -58,30 +57,34 @@ router.post("/chat", async (req, res) => {
   try {
     const { messages } = req.body;
 
-    // Transform messages into Gemini's format
-    const transformedMessages = messages.map((msg: any) => ({
+    // Transform messages into Gemini's content format
+    const contents = messages.map((msg: any) => ({
       role: msg.role,
-      parts: [{ text: msg.content }],
+      parts: [
+        {
+          text: msg.content,
+        },
+      ],
     }));
 
     const modelTemplate = genAI.getGenerativeModel({
-      model: "gemini-2.0-flash-exp",
+      model: "gemini-1.5-pro",
       systemInstruction: getSystemPrompt(),
     });
 
-    // Start a chat with history
-    const chat = modelTemplate.startChat({
-      history: transformedMessages.slice(0, -1), // All messages except the last one
+    const result = await modelTemplate.generateContentStream({
+      contents,
+      generationConfig: {
+        maxOutputTokens: 4000,
+        temperature: 0.1,
+      },
     });
-
-    // Send the last message to get the response
-    const lastMessage = transformedMessages[transformedMessages.length - 1];
-    const result = await chat.sendMessageStream(lastMessage.parts[0].text);
 
     res.setHeader("Content-Type", "text/plain");
 
     for await (const chunk of result.stream) {
       const chunkText = chunk.text();
+      console.log(chunkText);
       res.write(chunkText);
     }
     res.end();
