@@ -12,7 +12,7 @@ const genAI = new GoogleGenerativeAI(API);
 
 router.post("/template", async (req, res) => {
   const modelTemplate = genAI.getGenerativeModel({
-    model: "gemini-1.5-flash",
+    model: "gemini-2.0-pro-exp-02-05",
     systemInstruction:
       "Return either node or react based on what do you think this project should be. Only return a single word either 'node' or 'react'. Do not return anything extra",
   });
@@ -68,7 +68,7 @@ router.post("/chat", async (req, res) => {
     }));
 
     const modelTemplate = genAI.getGenerativeModel({
-      model: "gemini-2.0-flash-exp",
+      model: "gemini-2.0-pro-exp-02-05",
       systemInstruction: getSystemPrompt(),
     });
 
@@ -84,8 +84,10 @@ router.post("/chat", async (req, res) => {
 
     for await (const chunk of result.stream) {
       const chunkText = chunk.text();
-      console.log(chunkText);
-      res.write(chunkText);
+      for (const char of chunkText) {
+        res.write(char);
+        await new Promise((resolve) => setTimeout(resolve, 5)); // 10ms delay
+      }
     }
     res.end();
   } catch (error: any) {
