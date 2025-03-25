@@ -4,6 +4,7 @@ import { basePrompt as nodeBasePrompt } from "../defaults/node";
 import { basePrompt as reactBasePrompt } from "../defaults/react";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import dotenv from "dotenv";
+import { defaultresult } from "../helper/demo";
 dotenv.config();
 
 const router = Router();
@@ -88,6 +89,23 @@ router.post("/chat", async (req, res) => {
         res.write(char);
         await new Promise((resolve) => setTimeout(resolve, 5)); // 10ms delay
       }
+    }
+    res.end();
+  } catch (error: any) {
+    console.log(error);
+    res.status(500).json({ msg: error.message });
+  }
+});
+
+router.post("/chatDemo", async (req, res) => {
+  try {
+    // Set the content type to plain text
+    res.setHeader("Content-Type", "text/plain");
+
+    // Stream the defaultresult variable character by character
+    for (const char of defaultresult) {
+      res.write(char);
+      await new Promise((resolve) => setTimeout(resolve, 7)); // 5ms delay
     }
     res.end();
   } catch (error: any) {
