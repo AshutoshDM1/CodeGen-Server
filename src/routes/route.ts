@@ -61,7 +61,7 @@ router.post("/refinePrompt", async (req, res) => {
     const modelRefine = genAI.getGenerativeModel({
       model: "gemini-2.0-pro-exp-02-05",
       systemInstruction:
-        "You are a helpful assistant that refines prompts for Website genteration AI Agent dont add any extra content just return the refined prompt which out any typos or errors also add to do inhancement in the prompt",
+        "You are a specialized prompt refiner for React with TypeScript website generation in Vite. Your task is to enhance user prompts by: 1) Fixing typos and grammatical errors, 2) Clarifying requirements, and 3) Making the prompt more specific. Return ONLY the refined prompt without adding any new features, components, or functionality that wasn't explicitly requested. Do not add explanations, disclaimers, or additional content. Keep the scope limited to what was originally requested, even if minimal.",
     });
 
     const contents = [
@@ -71,16 +71,25 @@ router.post("/refinePrompt", async (req, res) => {
       },
     ];
 
-    const result = await modelRefine.generateContent({
+    // Use streaming response like in the chat route
+    const result = await modelRefine.generateContentStream({
       contents,
       generationConfig: {
         maxOutputTokens: 4000,
         temperature: 0.1,
       },
     });
-    let answer = result.response.text();
-    answer = answer.trim();
-    res.json({ answer });
+
+    res.setHeader("Content-Type", "text/plain");
+
+    for await (const chunk of result.stream) {
+      const chunkText = chunk.text();
+      for (const char of chunkText) {
+        res.write(char);
+        await new Promise((resolve) => setTimeout(resolve, 5)); // 5ms delay
+      }
+    }
+    res.end();
   } catch (error: any) {
     console.log(error);
     res.status(500).json({ msg: error.message });
@@ -109,8 +118,8 @@ router.post("/chat", async (req, res) => {
     const result = await modelTemplate.generateContentStream({
       contents,
       generationConfig: {
-        maxOutputTokens: 4000,
-        temperature: 0.1,
+        maxOutputTokens: 15000,
+        temperature: 0.5,
       },
     });
 
@@ -120,7 +129,7 @@ router.post("/chat", async (req, res) => {
       const chunkText = chunk.text();
       for (const char of chunkText) {
         res.write(char);
-        await new Promise((resolve) => setTimeout(resolve, 5)); // 10ms delay
+        await new Promise((resolve) => setTimeout(resolve, 8)); // 10ms delay
       }
     }
     res.end();
@@ -138,7 +147,7 @@ router.post("/chatDemo", async (req, res) => {
     // Stream the defaultresult variable character by character
     for (const char of defaultresult) {
       res.write(char);
-      await new Promise((resolve) => setTimeout(resolve, 7)); // 5ms delay
+      await new Promise((resolve) => setTimeout(resolve, 8)); // 5ms delay
     }
     res.end();
   } catch (error: any) {
