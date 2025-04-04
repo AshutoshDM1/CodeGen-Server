@@ -1,1 +1,1 @@
-{"root":["./src/index.ts"],"version":"5.7.2"}
+{"root":["./src/index.ts","./src/controllers/claude.ts","./src/controllers/gemini.ts","./src/controllers/message.ts","./src/controllers/project.ts","./src/defaults/node.ts","./src/defaults/react.ts","./src/helper/constants.ts","./src/helper/demo.ts","./src/helper/prompts.ts","./src/helper/stripindents.ts","./src/routes/ai.route.ts","./src/routes/message.route.ts","./src/routes/project.route.ts"],"version":"5.7.2"}
