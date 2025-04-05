@@ -18,11 +18,11 @@ model User {
 
 model Project {
   id                 Int       @id @default(autoincrement())
-  userId             Int
-  user               User      @relation(fields: [userId], references: [id]) // User who created the project 
+  userId             Int       // User who created the project 
+  user               User      @relation(fields: [userId], references: [id])
   projectName        String
   projectDescription String
-  lastUpdatedCode    Json
+  code               Code?     // One-to-one relation (Project has one optional Code)
   messages           Message[] // Messages in the project
   createdAt          DateTime  @default(now())
 }
@@ -32,4 +32,11 @@ model Message {
   message   Json
   projectId Int
   project   Project @relation(fields: [projectId], references: [id])
+}
+
+model Code {
+  id        Int      @id @default(autoincrement())
+  code      Json
+  projectId Int      @unique
+  project   Project  @relation(fields: [projectId], references: [id])
 }
