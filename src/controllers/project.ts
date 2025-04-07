@@ -55,4 +55,16 @@ const getProject: RequestHandler<{}, {}, GetProject, {}> = async (req, res) => {
   }
 };
 
-export { createProject, updateProject, deleteProject, getProject };
+const getAllProject: RequestHandler<{}, {}, { userEmail: string }, {}> = async (req, res) => {
+  const { userEmail } = req.body;
+  try {
+    const response = await prismaClient.user.findMany({
+      where: { email: userEmail },
+    });
+    res.status(200).json({ message: 'Projects fetched', response });
+  } catch (error: any) {
+    res.status(500).json({ error: error || 'Failed to fetch project' });
+  }
+};
+
+export { createProject, updateProject, deleteProject, getProject, getAllProject };

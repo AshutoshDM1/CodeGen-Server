@@ -1,7 +1,7 @@
 export interface CreateMessage {
-  id: number;
-  content: MessageContent[];
+  message: MessageContent;
   projectId: number;
+  userId: number;
 }
 
 type MessageContent = {

@@ -3,14 +3,11 @@ import prismaClient from '../config/db';
 import { CreateMessage, GetMessage } from '../types/message';
 
 const createMessage: RequestHandler<{}, {}, CreateMessage, {}> = async (req, res) => {
-  const { id, content, projectId } = req.body;
-
-  console.log(id, content, projectId);
+  const { message, projectId } = req.body;
   try {
     const response = await prismaClient.message.create({
       data: {
-        id: id,
-        message: content,
+        message: message,
         projectId: projectId,
       },
     });
