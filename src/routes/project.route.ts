@@ -9,10 +9,10 @@ import {
 
 const porjectRouter = Router();
 
-porjectRouter.post('/getProject', getProject);
+porjectRouter.post('/getProject/:id', getProject);
 porjectRouter.post('/getAllProject', getAllProject);
 porjectRouter.post('/createProject', createProject);
 porjectRouter.put('/updateProject', updateProject);
-porjectRouter.delete('/deleteProject', deleteProject);
+porjectRouter.delete('/deleteProject/:id', deleteProject);
 
 export default porjectRouter;

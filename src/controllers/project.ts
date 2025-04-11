@@ -31,11 +31,11 @@ const updateProject: RequestHandler<{}, {}, UpdateProject, {}> = async (req, res
   }
 };
 
-const deleteProject: RequestHandler<{}, {}, DeleteProject, {}> = async (req, res) => {
-  const { id, userId } = req.body;
+const deleteProject: RequestHandler<{ id: string }, {}, {}, {}> = async (req, res) => {
+  const { id } = req.params;
   try {
     const response = await prismaClient.project.delete({
-      where: { id, userId },
+      where: { id: parseInt(id) },
     });
     res.status(200).json({ message: 'Project deleted', response });
   } catch (error: any) {
@@ -43,11 +43,11 @@ const deleteProject: RequestHandler<{}, {}, DeleteProject, {}> = async (req, res
   }
 };
 
-const getProject: RequestHandler<{}, {}, GetProject, {}> = async (req, res) => {
-  const { id, userId } = req.body;
+const getProject: RequestHandler<{ id: string }, {}, GetProject, {}> = async (req, res) => {
+  const { id } = req.params;
   try {
     const response = await prismaClient.project.findUnique({
-      where: { id, userId },
+      where: { id: parseInt(id) },
     });
     res.status(200).json({ message: response });
   } catch (error: any) {
@@ -61,7 +61,10 @@ const getAllProject: RequestHandler<{}, {}, { userEmail: string }, {}> = async (
     const response = await prismaClient.user.findMany({
       where: { email: userEmail },
     });
-    res.status(200).json({ message: 'Projects fetched', response });
+    const projectResponse = await prismaClient.project.findMany({
+      where: { userId: response[0].id },
+    });
+    res.status(200).json({ message: 'Projects fetched', projectResponse });
   } catch (error: any) {
     res.status(500).json({ error: error || 'Failed to fetch project' });
   }
