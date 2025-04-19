@@ -24,6 +24,8 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no -i ec2-key.pem ubuntu@3.110.56.226 << 'EOF'
             cd ~/CodeGen-Server
+            git reset --hard HEAD
+            git clean -fd
             git pull origin main
             pnpm install
             pnpx prisma generate
