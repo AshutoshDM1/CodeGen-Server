@@ -22,7 +22,7 @@ jobs:
 
       - name: Deploy to EC2
         run: |
-          ssh -o StrictHostKeyChecking=no -i ec2-key.pem ubuntu@your-ec2-public-ip << 'EOF'
+          ssh -o StrictHostKeyChecking=no -i ec2-key.pem ubuntu@3.110.56.226 << 'EOF'
             cd ~/your-app-directory
             git pull origin main
             npm install
