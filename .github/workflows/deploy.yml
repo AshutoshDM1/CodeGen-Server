@@ -15,7 +15,7 @@ jobs:
 
       - name: Setup SSH
         run: |
-          echo "${{ secrets.EC2_SSH_KEY }}" > ec2-key.pem
+          echo "${{ secrets.EC2_SSH_KEY }}" | tr -d '\r' > ec2-key.pem
           chmod 400 ec2-key.pem
           eval "$(ssh-agent -s)"
           ssh-add ec2-key.pem
@@ -23,11 +23,11 @@ jobs:
       - name: Deploy to EC2
         run: |
           ssh -o StrictHostKeyChecking=no -i ec2-key.pem ubuntu@3.110.56.226 << 'EOF'
-            cd ~/your-app-directory
+            cd ~/CodeGen-Server
             git pull origin main
-            npm install
-            npx prisma generate
-            npx prisma migrate deploy
-            npm run build
+            pnpm install
+            pnpx prisma generate
+            pnpx prisma migrate deploy
+            pnpm run build
             pm2 restart all
           EOF
