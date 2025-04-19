@@ -25,7 +25,7 @@ app.use('/api/v1/project', ProjectRoute);
 app.use('/api/v1/code', CodeRoute);
 
 app.get('/', async (req, res) => {
-  res.status(200).json({ msg: 'Welcome to CodeGen Server' });
+  res.status(200).json({ msg: 'Welcome to CodeGen Server v1' });
 });
 
 app.listen(port, () => {
