@@ -8,7 +8,14 @@ import CodeRoute from './routes/code.route';
 dotenv.config();
 
 const app = express();
-app.use(cors());
+app.use(
+  cors({
+    origin: 'http://localhost:3000',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+  }),
+);
 app.use(express.json());
 const port: Number = process.env.PORT ? parseInt(process.env.PORT) : 4000;
 

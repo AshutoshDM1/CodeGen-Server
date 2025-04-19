@@ -3,17 +3,25 @@ import prismaClient from '../config/db';
 import { CreateProject, UpdateProject, DeleteProject, GetProject } from '../types/project';
 
 const createProject: RequestHandler<{}, {}, CreateProject, {}> = async (req, res) => {
-  const { projectName, projectDescription, userId } = req.body;
+  const { projectName, projectDescription, userEmail } = req.body;
   try {
+    const userResponse = await prismaClient.user.findUnique({
+      where: { email: userEmail },
+    });
     const response = await prismaClient.project.create({
       data: {
         projectName,
         projectDescription,
-        userId,
+        user: {
+          connect: {
+            id: userResponse?.id,
+          },
+        },
       },
     });
     res.status(200).json({ message: 'Project created', response });
   } catch (error: any) {
+    console.log(error);
     res.status(500).json({ error: error || 'Failed to create project' });
   }
 };

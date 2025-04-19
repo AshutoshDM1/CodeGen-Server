@@ -18,11 +18,11 @@ const createMessage: RequestHandler<{}, {}, CreateMessage, {}> = async (req, res
   }
 };
 
-const getMessage: RequestHandler<{}, {}, GetMessage, {}> = async (req, res) => {
-  const { projectId } = req.body;
+const getMessage: RequestHandler<{ projectId: string }, {}, {}, {}> = async (req, res) => {
+  const { projectId } = req.params;
   const response = await prismaClient.message.findMany({
     where: {
-      projectId: projectId,
+      projectId: parseInt(projectId),
     },
   });
   res.status(200).json({ messages: response });

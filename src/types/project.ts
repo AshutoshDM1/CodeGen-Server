@@ -1,7 +1,7 @@
 export interface CreateProject {
   projectName: string;
   projectDescription: string;
-  userId: number;
+  userEmail: string;
 }
 
 export interface UpdateProject {

@@ -7,6 +7,6 @@ messageRouter.get('/', (req, res) => {
 });
 
 messageRouter.post('/createMessage', createMessage);
-messageRouter.post('/getMessage', getMessage);
+messageRouter.get('/getMessage/:projectId', getMessage);
 
 export default messageRouter;
