@@ -20,6 +20,17 @@ jobs:
           eval "$(ssh-agent -s)"
           ssh-add ec2-key.pem
 
+      - name: Create Deployment
+        id: deployment
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.sha }}
+          release_name: Deployment for ${{ github.sha }}
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Deploy to EC2
         run: |
           ssh -o StrictHostKeyChecking=no -i ec2-key.pem ubuntu@3.110.56.226 << 'EOF'
@@ -31,5 +42,5 @@ jobs:
             pnpx prisma generate
             pnpx prisma migrate deploy
             pnpm run build
-            pm2 restart all
+            pm2 restart codegen-aws
           EOF
