@@ -22,14 +22,11 @@ jobs:
 
       - name: Create Deployment
         id: deployment
-        uses: softprops/action-gh-release@v1
+        uses: chrnorm/deployment-action@v2
         with:
-          tag_name: ${{ github.sha }}
-          release_name: Deployment for ${{ github.sha }}
-          draft: false
-          prerelease: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ github.token }}
+          environment: production
+          initial-status: in_progress
 
       - name: Deploy to EC2
         run: |
@@ -44,3 +41,11 @@ jobs:
             pnpm run build
             pm2 restart codegen-aws
           EOF
+
+      - name: Update deployment status
+        if: always()
+        uses: chrnorm/deployment-status@v2
+        with:
+          token: ${{ github.token }}
+          state: ${{ job.status == 'success' && 'success' || 'failure' }}
+          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
