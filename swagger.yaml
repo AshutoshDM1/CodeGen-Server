@@ -1,0 +1,557 @@
+openapi: 3.0.0
+info:
+  title: CodeGen API
+  version: 1.0.0
+  description: API documentation for the CodeGen Server
+  contact:
+    name: CodeGen Support
+
+servers:
+  - url: http://localhost:4000/api/v1
+    description: Development server
+  - url: https://codegen-aws.elitedev.tech/api/v1
+    description: Production server
+
+tags:
+  - name: AI
+    description: AI-related endpoints
+  - name: Messages
+    description: Message management endpoints
+  - name: Projects
+    description: Project management endpoints
+  - name: Code
+    description: Code management endpoints
+
+paths:
+  /ai:
+    get:
+      summary: Get AI route welcome message
+      tags:
+        - AI
+      responses:
+        200:
+          description: A welcome message
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  msg:
+                    type: string
+                    example: Welcome to CodeGen Server Ai Route
+
+  /ai/template:
+    post:
+      summary: Generate a template based on a prompt
+      tags:
+        - AI
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AITemplateRequest'
+      responses:
+        200:
+          description: Successfully generated template
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  template:
+                    type: string
+        400:
+          description: Bad request
+
+  /ai/refinePrompt:
+    post:
+      summary: Refine a given prompt
+      tags:
+        - AI
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AIRefinePromptRequest'
+      responses:
+        200:
+          description: Successfully refined prompt
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  refinedPrompt:
+                    type: string
+        400:
+          description: Bad request
+
+  /ai/chat:
+    post:
+      summary: Chat with AI
+      tags:
+        - AI
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AIChatRequest'
+      responses:
+        200:
+          description: Successfully sent message
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  reply:
+                    type: string
+        400:
+          description: Bad request
+
+  /ai/chatDemo:
+    post:
+      summary: Demo chat with AI (no project needed)
+      tags:
+        - AI
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AIChatDemoRequest'
+      responses:
+        200:
+          description: Successfully sent demo message
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  reply:
+                    type: string
+        400:
+          description: Bad request
+
+  /message:
+    get:
+      summary: Get message route welcome message
+      tags:
+        - Messages
+      responses:
+        200:
+          description: A welcome message
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Welcome to Message Route
+
+  /message/createMessage:
+    post:
+      summary: Create a new message
+      tags:
+        - Messages
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMessageRequest'
+      responses:
+        201:
+          description: Message created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+        400:
+          description: Bad request
+
+  /message/getMessage/{projectId}:
+    get:
+      summary: Get messages for a project
+      tags:
+        - Messages
+      parameters:
+        - in: path
+          name: projectId
+          schema:
+            type: string
+          required: true
+          description: The project ID
+      responses:
+        200:
+          description: List of messages for the project
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Message'
+        404:
+          description: Messages not found
+
+  /project/getProject/{id}:
+    get:
+      summary: Get a project by ID
+      tags:
+        - Projects
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: Project ID
+      responses:
+        200:
+          description: Project details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        404:
+          description: Project not found
+
+  /project/getAllProject:
+    post:
+      summary: Get all projects
+      tags:
+        - Projects
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: string
+      responses:
+        200:
+          description: List of projects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Project'
+        404:
+          description: Projects not found
+
+  /project/createProject:
+    post:
+      summary: Create a new project
+      tags:
+        - Projects
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProjectRequest'
+      responses:
+        201:
+          description: Project created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        400:
+          description: Bad request
+
+  /project/updateProject:
+    put:
+      summary: Update an existing project
+      tags:
+        - Projects
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProjectRequest'
+      responses:
+        200:
+          description: Project updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Project'
+        400:
+          description: Bad request
+        404:
+          description: Project not found
+
+  /project/deleteProject/{id}:
+    delete:
+      summary: Delete a project
+      tags:
+        - Projects
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+          description: Project ID
+      responses:
+        200:
+          description: Project deleted successfully
+        404:
+          description: Project not found
+
+  /code/createCode:
+    post:
+      summary: Create a new code snippet
+      tags:
+        - Code
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateCodeRequest'
+      responses:
+        201:
+          description: Code snippet created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CodeModel'
+        400:
+          description: Bad request
+
+  /code/getCode/{projectId}:
+    get:
+      summary: Get code snippets for a project
+      tags:
+        - Code
+      parameters:
+        - in: path
+          name: projectId
+          schema:
+            type: string
+          required: true
+          description: The project ID
+      responses:
+        200:
+          description: Code snippets for the project
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CodeModel'
+        404:
+          description: Code not found
+
+  /code/updateCode:
+    put:
+      summary: Update a code snippet
+      tags:
+        - Code
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateCodeRequest'
+      responses:
+        200:
+          description: Code snippet updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CodeModel'
+        400:
+          description: Bad request
+        404:
+          description: Code not found
+
+components:
+  schemas:
+    # AI Models
+    AITemplateRequest:
+      type: object
+      required:
+        - prompt
+      properties:
+        prompt:
+          type: string
+          example: 'Create a React component for a login form'
+
+    AIRefinePromptRequest:
+      type: object
+      required:
+        - prompt
+      properties:
+        prompt:
+          type: string
+          example: 'Create a Node.js server with Express'
+
+    AIChatRequest:
+      type: object
+      required:
+        - message
+        - projectId
+      properties:
+        message:
+          type: string
+          example: 'How do I implement authentication?'
+        projectId:
+          type: string
+          example: '1234567890'
+
+    AIChatDemoRequest:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          example: 'What are the best practices for React development?'
+
+    # Message Models
+    Message:
+      type: object
+      properties:
+        id:
+          type: string
+        userId:
+          type: string
+        projectId:
+          type: string
+        content:
+          type: string
+        role:
+          type: string
+          enum: [user, assistant]
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateMessageRequest:
+      type: object
+      required:
+        - userId
+        - projectId
+        - content
+        - role
+      properties:
+        userId:
+          type: string
+          example: 'user123'
+        projectId:
+          type: string
+          example: 'project456'
+        content:
+          type: string
+          example: 'How do I implement authentication in my project?'
+        role:
+          type: string
+          enum: [user, assistant]
+          example: 'user'
+
+    # Project Models
+    Project:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        userId:
+          type: string
+        description:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateProjectRequest:
+      type: object
+      required:
+        - name
+        - userId
+      properties:
+        name:
+          type: string
+          example: 'E-commerce Website'
+        userId:
+          type: string
+          example: 'user123'
+        description:
+          type: string
+          example: 'An e-commerce website with product catalog and shopping cart'
+
+    UpdateProjectRequest:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+          example: 'project456'
+        name:
+          type: string
+          example: 'Updated E-commerce Website'
+        description:
+          type: string
+          example: 'Updated description for the e-commerce website'
+
+    # Code Models
+    CodeModel:
+      type: object
+      properties:
+        id:
+          type: string
+        projectId:
+          type: string
+        content:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateCodeRequest:
+      type: object
+      required:
+        - projectId
+        - content
+      properties:
+        projectId:
+          type: string
+          example: 'project456'
+        content:
+          type: string
+          example: "const express = require('express');\nconst app = express();\n\napp.listen(3000, () => {\n  console.log('Server running on port 3000');\n});"
+
+    UpdateCodeRequest:
+      type: object
+      required:
+        - id
+        - content
+      properties:
+        id:
+          type: string
+          example: 'code789'
+        content:
+          type: string
+          example: "const express = require('express');\nconst app = express();\n\napp.get('/', (req, res) => {\n  res.send('Hello World');\n});\n\napp.listen(3000, () => {\n  console.log('Server running on port 3000');\n});"
