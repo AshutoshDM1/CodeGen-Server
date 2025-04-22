@@ -9,7 +9,7 @@ import {
 
 const porjectRouter = Router();
 
-porjectRouter.post('/getProject/:id', getProject);
+porjectRouter.get('/getProject/:id', getProject);
 porjectRouter.post('/getAllProject', getAllProject);
 porjectRouter.post('/createProject', createProject);
 porjectRouter.put('/updateProject', updateProject);

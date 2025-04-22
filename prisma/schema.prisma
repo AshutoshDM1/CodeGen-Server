@@ -33,7 +33,7 @@ model Message {
   message   Json
   createdAt DateTime @default(now())
   projectId Int
-  project   Project  @relation(fields: [projectId], references: [id])
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 
 model Code {
@@ -41,7 +41,7 @@ model Code {
   code      Json
   createdAt DateTime @default(now())
   projectId Int      @unique
-  project   Project  @relation(fields: [projectId], references: [id])
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
   }
 
 model Account {

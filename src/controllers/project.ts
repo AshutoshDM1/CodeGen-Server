@@ -51,7 +51,7 @@ const deleteProject: RequestHandler<{ id: string }, {}, {}, {}> = async (req, re
   }
 };
 
-const getProject: RequestHandler<{ id: string }, {}, GetProject, {}> = async (req, res) => {
+const getProject: RequestHandler<{ id: string }, {}, {}, {}> = async (req, res) => {
   const { id } = req.params;
   try {
     const response = await prismaClient.project.findUnique({

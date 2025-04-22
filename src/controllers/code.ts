@@ -35,12 +35,12 @@ const updateCode: RequestHandler<{}, {}, UpdateCode, {}> = async (req, res) => {
   }
 };
 
-const getCode: RequestHandler<{}, {}, GetCode, {}> = async (req, res) => {
-  const { projectId } = req.body;
+const getCode: RequestHandler<{ projectId: string }, {}, {}, {}> = async (req, res) => {
+  const { projectId } = req.params;
   try {
     const code = await prismaClient.code.findUnique({
       where: {
-        projectId,
+        projectId: parseInt(projectId),
       },
     });
     res.status(200).json({ message: 'Code fetched successfully', code });
