@@ -140,7 +140,7 @@ const AiChat: RequestHandler<{}, {}, ChatRequest, {}> = async (req, res) => {
       const chunkText = chunk.text();
       for (const char of chunkText) {
         res.write(char);
-        await new Promise((resolve) => setTimeout(resolve, 8)); // 10ms delay
+        await new Promise((resolve) => setTimeout(resolve, 12)); // 10ms delay
       }
     }
     res.end();
