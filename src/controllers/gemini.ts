@@ -24,7 +24,7 @@ export interface ChatRequest {
 
 const template: RequestHandler<{}, {}, TemplateRequest, {}> = async (req, res) => {
   const modelTemplate = genAI.getGenerativeModel({
-    model: 'gemini-2.0-pro-exp-02-05',
+    model: 'gemini-2.5-flash-preview-04-17',
     systemInstruction:
       "Return either node or react based on what do you think this project should be. Only return a single word either 'node' or 'react'. Do not return anything extra",
   });
@@ -70,7 +70,7 @@ const refinePrompt: RequestHandler<{}, {}, RefinePromptRequest, {}> = async (req
     const { prompt } = req.body;
 
     const modelRefine = genAI.getGenerativeModel({
-      model: 'gemini-2.0-pro-exp-02-05',
+      model: 'gemini-2.5-flash-preview-04-17',
       systemInstruction:
         "You are a specialized prompt refiner for React with TypeScript website generation in Vite. Your task is to enhance user prompts by: 1) Fixing typos and grammatical errors, 2) Clarifying requirements, and 3) Making the prompt more specific. Return ONLY the refined prompt without adding any new features, components, or functionality that wasn't explicitly requested. Do not add explanations, disclaimers, or additional content. Keep the scope limited to what was originally requested, even if minimal.",
     });
@@ -122,7 +122,7 @@ const AiChat: RequestHandler<{}, {}, ChatRequest, {}> = async (req, res) => {
     }));
 
     const modelTemplate = genAI.getGenerativeModel({
-      model: 'gemini-2.0-pro-exp-02-05',
+      model: 'gemini-2.5-flash-preview-04-17',
       systemInstruction: getSystemPrompt(),
     });
 

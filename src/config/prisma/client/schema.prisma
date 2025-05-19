@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/config/prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int       @id @default(autoincrement())
+  email     String    @unique
+  name      String
+  password  String?
+  createdAt DateTime  @default(now())
+  Account   Account[]
+  Project   Project[]
+}
+
+model Project {
+  id                 Int       @id @default(autoincrement())
+  projectName        String
+  projectDescription String
+  createdAt          DateTime  @default(now())
+  userId             Int
+  code               Code?
+  messages           Message[]
+  user               User      @relation(fields: [userId], references: [id])
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  message   Json
+  createdAt DateTime @default(now())
+  projectId Int
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model Code {
+  id        Int      @id @default(autoincrement())
+  code      Json
+  createdAt DateTime @default(now())
+  projectId Int      @unique
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}
+
+model Account {
+  id                String  @id
+  userId            Int
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  User              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}

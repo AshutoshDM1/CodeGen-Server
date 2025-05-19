@@ -74,6 +74,7 @@ const getAllProject: RequestHandler<{}, {}, { userEmail: string }, {}> = async (
     });
     res.status(200).json({ message: 'Projects fetched', projectResponse });
   } catch (error: any) {
+    console.log(error);
     res.status(500).json({ error: error || 'Failed to fetch project' });
   }
 };
