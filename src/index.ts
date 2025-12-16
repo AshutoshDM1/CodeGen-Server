@@ -13,8 +13,10 @@ app.use(
   cors({
     origin: [
       'http://localhost:3000',
+      'http://localhost:3001',
       'https://codegen.elitedev.tech',
       'https://codegen-aws.elitedev.tech',
+      'https://codegen.elitecoder.tech',
       'http://localhost:4000',
     ],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
