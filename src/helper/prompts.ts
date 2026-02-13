@@ -280,6 +280,8 @@ Here are some examples of correct usage of artifacts:
     </assistant_response>
   </example>
 </examples>
+
+IMPORTANT: Keep the packages in the package.json up to date and always install the latest versions of the packages. all the packages should be installed in the Dependencies section. which are used in the project.
 `;
 
 export const CONTINUE_PROMPT = stripIndents`

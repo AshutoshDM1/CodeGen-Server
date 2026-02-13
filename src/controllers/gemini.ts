@@ -33,7 +33,6 @@ const template: RequestHandler<{}, {}, TemplateRequest, {}> = async (req, res) =
 
     const result = await modelTemplate.generateContent(prompt, {});
     let answer = result.response.text();
-    console.log(answer);
     answer = answer.trim();
 
     if (answer === 'react') {
@@ -126,7 +125,7 @@ const AiChat: RequestHandler<{}, {}, ChatRequest, {}> = async (req, res) => {
       systemInstruction: getSystemPrompt(),
     });
 
-    const result = await modelTemplate.generateContentStream({
+    const result = await modelTemplate.generateContent({
       contents,
       generationConfig: {
         maxOutputTokens: 15000,
@@ -134,16 +133,9 @@ const AiChat: RequestHandler<{}, {}, ChatRequest, {}> = async (req, res) => {
       },
     });
 
+    const text = result.response.text();
     res.setHeader('Content-Type', 'text/plain');
-
-    for await (const chunk of result.stream) {
-      const chunkText = chunk.text();
-      for (const char of chunkText) {
-        res.write(char);
-        await new Promise((resolve) => setTimeout(resolve, 13)); // 13ms delay
-      }
-    }
-    res.end();
+    res.send(text);
   } catch (error: any) {
     console.log(error);
     res.status(500).json({ msg: error.message });
