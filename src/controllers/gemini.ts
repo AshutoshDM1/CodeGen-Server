@@ -5,6 +5,7 @@ import { basePrompt as reactBasePrompt } from '../defaults/react';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import dotenv from 'dotenv';
 import { defaultresult } from '../helper/demo';
+import demoAiChat from '../config/demoAiChat';
 dotenv.config();
 
 const API = process.env.GOOGLE_API_KEY || '';
@@ -144,15 +145,7 @@ const AiChat: RequestHandler<{}, {}, ChatRequest, {}> = async (req, res) => {
 
 const AiChatDemo: RequestHandler<{}, {}, {}, {}> = async (req, res) => {
   try {
-    // Set the content type to plain text
-    res.setHeader('Content-Type', 'text/plain');
-
-    // Stream the defaultresult variable character by character
-    for (const char of defaultresult) {
-      res.write(char);
-      await new Promise((resolve) => setTimeout(resolve, 8)); // 5ms delay
-    }
-    res.end();
+    res.send(demoAiChat);
   } catch (error: any) {
     console.log(error);
     res.status(500).json({ msg: error.message });
