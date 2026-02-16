@@ -18,6 +18,7 @@ app.use(
       'https://codegen-aws.elitedev.tech',
       'https://codegen.elitecoder.tech',
       'http://localhost:4000',
+      'https://codegen.elitedev.space',
     ],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
