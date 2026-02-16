@@ -9,6 +9,6 @@ AiRoute.get('/', async (req, res) => {
 AiRoute.post('/template', template);
 AiRoute.post('/refinePrompt', refinePrompt);
 AiRoute.post('/chat', AiChat);
-AiRoute.post('/chatDemo', AiChatDemo);
+AiRoute.post('/demochat', AiChatDemo);
 
 export default AiRoute;

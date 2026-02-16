@@ -12,7 +12,7 @@ const demoAiChat = `I'll create a beautiful and animated navbar using React, Tai
 3. This animated navbar will feature a sleek design, responsive behavior for mobile devices, and smooth transitions using Framer Motion.
 
 <boltArtifact id="animated-navbar" title="Animated Navbar with React and Tailwind CSS">
-  <boltAction type="file" filePath="src/package.json">
+  <boltAction type="file" filePath="package.json">
     {
       "name": "vite-react-typescript-starter",
       "private": true,
