@@ -19,6 +19,7 @@ app.use(
       'https://codegen.elitecoder.tech',
       'http://localhost:4000',
       'https://codegen.elitedev.space',
+      'https://codegen-prod.vercel.app',
     ],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
