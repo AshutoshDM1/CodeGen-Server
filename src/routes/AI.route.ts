@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { template, refinePrompt, AiChat, AiChatDemo } from '../controllers/gemini';
+import { template, refinePrompt, AiChat, AiChatDemo } from '../controllers/aiResponse';
 
 const AiRoute = Router();
 
